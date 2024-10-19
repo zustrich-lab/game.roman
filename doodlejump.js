@@ -41,9 +41,15 @@ let platformWidth = 60;
 let platformHeight = 18;
 let platformImg;
 
-let score = 0;
-let maxScore = 0;
 let gameOver = false;
+
+// coins
+let coinImg;
+let coinProbability = 0.1;
+let coinWidth = 40;
+let coinHeigth = 40;
+let coinArray = [];
+let coinsCollected = 0;
 
 window.onload = function() {
     board = document.getElementById("board");
@@ -88,6 +94,7 @@ window.onload = function() {
         score = 0;
         maxScore = 0;
         gameOver = false;
+        coinArray = []
         restartButton.style.visibility = "hidden";
         placePlatforms();
     });
@@ -109,6 +116,9 @@ window.onload = function() {
 
     platformImg = new Image();
     platformImg.src = "./img/octiejumpplatform.png";
+
+    coinImg = new Image();
+    coinImg.src = "./img/moneta.PNG";
 
     velocityY = initialVelocityY;
     placePlatforms();
@@ -155,17 +165,34 @@ function update() {
         context.drawImage(platform.img, platform.x, platform.y, platform.width, platform.height);
     }
 
+    // coins
+    for (let coin of coinArray) {
+        if (velocityY < 0 && doodler.y < boardHeight*3/4) {
+            coin.y -= initialVelocityY; //slide platform down
+        }
+        if (detectCollision(doodler, coin)) {
+            coinsCollected++;
+            coinArray.pop(coin);
+        }
+        context.drawImage(coin.img, coin.x, coin.y, coin.width, coin.height);
+    }
+
     // clear platforms and add new platform
     while (platformArray.length > 0 && platformArray[0].y >= boardHeight) {
         platformArray.shift(); //removes first element from the array
         newPlatform(); //replace with new platform on top
     }
 
+    // clear coins
+    while (coinArray.length > 0 && coinArray[0].y >= board.height) {
+        coinArray.shift();
+    }
+
     //score
-    updateScore();
-    context.fillStyle = "black";
-    context.font = "16px sans-serif";
-    context.fillText(score, 5, 20);
+    context.drawImage(coinImg, 5, 20, coinWidth, coinHeigth);
+    context.fillStyle = "white";
+    context.font = "28px sans-serif";
+    context.fillText(coinsCollected, 15 + coinWidth, 20 + coinHeigth*3/4);
 
     if (gameOver) {
         context.fillText("Game Over: Press 'Space' to Restart", boardWidth/7, boardHeight*7/8);
@@ -197,6 +224,7 @@ function moveDoodler(e) {
         maxScore = 0;
         gameOver = false;
         restartButton.style.visibility = "hidden";
+        coinArray = [];
         placePlatforms();
     }
 }
@@ -215,7 +243,7 @@ function placePlatforms() {
 
     platformArray.push(platform);
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 9; i++) {
         let randomX = Math.floor(Math.random() * boardWidth*3/4); //(0-1) * boardWidth*3/4
         let platform = {
             img : platformImg,
@@ -238,6 +266,16 @@ function newPlatform() {
         width : platformWidth,
         height : platformHeight
     }
+    if (Math.random() < coinProbability) {
+        let coin = {
+            img: coinImg,
+            x: platform.x + 10,
+            y: platform.y - 50,
+            width: coinWidth,
+            height: coinHeigth
+        };
+        coinArray.push(coin);
+    }
 
     platformArray.push(platform);
 }
@@ -258,17 +296,4 @@ function detectCollision(a, b) {
            a.x + a.width > b.x &&   //a's top right corner passes b's top left corner
            a.y < b.y + b.height &&  //a's top left corner doesn't reach b's bottom left corner
            a.y + a.height > b.y;    //a's bottom left corner passes b's top left corner
-}
-
-function updateScore() {
-    let points = Math.floor(50*Math.random()); //(0-1) *50 --> (0-50)
-    if (velocityY < 0) { //negative going up
-        maxScore += points;
-        if (score < maxScore) {
-            score = maxScore;
-        }
-    }
-    else if (velocityY >= 0) {
-        maxScore -= points;
-    }
 }
