@@ -95,6 +95,7 @@ window.onload = function() {
         score = 0;
         maxScore = 0;
         gameOver = false;
+        coinsCollected = 0;
         coinArray = []
         restartButton.style.visibility = "hidden";
         placePlatforms();
@@ -223,6 +224,7 @@ function moveDoodler(e) {
         velocityY = initialVelocityY;
         score = 0;
         maxScore = 0;
+        coinsCollected = 0;
         gameOver = false;
         restartButton.style.visibility = "hidden";
         coinArray = [];
