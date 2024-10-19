@@ -40,6 +40,7 @@ let platformArray = [];
 let platformWidth = 60;
 let platformHeight = 18;
 let platformImg;
+let platformCount = 7;
 
 let gameOver = false;
 
@@ -243,7 +244,7 @@ function placePlatforms() {
 
     platformArray.push(platform);
 
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < platformCount - 1; i++) {
         let randomX = Math.floor(Math.random() * boardWidth*3/4); //(0-1) * boardWidth*3/4
         let platform = {
             img : platformImg,
