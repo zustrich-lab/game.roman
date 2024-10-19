@@ -215,7 +215,7 @@ function placePlatforms() {
 
     platformArray.push(platform);
 
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 6; i++) {
         let randomX = Math.floor(Math.random() * boardWidth*3/4); //(0-1) * boardWidth*3/4
         let platform = {
             img : platformImg,
@@ -246,10 +246,11 @@ function isOnPlatofrm(doodler, platform) {
     const doodlerBottomY = doodler.y + doodler.height;
     const platformMiddleY = platform.y - platform.height/2;
     const platformRightX = platform.x + platform.width;
+    const doodlerCheckX = doodler.x + doodler.width/4; // половина ширини по середині
     return doodlerBottomY < platform.y &&
            doodlerBottomY > platformMiddleY &&
-           doodler.x + doodler.width > platform.x &&
-           doodler.x < platformRightX;
+           doodlerCheckX + doodler.width/2 > platform.x &&
+           doodlerCheckX < platformRightX;
 }
 
 function detectCollision(a, b) {
