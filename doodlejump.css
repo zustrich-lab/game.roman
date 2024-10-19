@@ -1,8 +1,39 @@
+* {
+    overflow-y: hidden;
+}
+
+html, body {
+    flex: 1;
+}
+
 body {
     text-align: center;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
 }
 
 #board {
-    /* background-color: green; */
-    background-image: url("./doodlejumpbg.png");
+    background-image: url("./img/octiejumpbg.PNG");
+}
+
+#left, #right {
+    position: fixed;
+    bottom: 30px;
+}
+
+#left {
+    left: 30px;
+}
+
+#right {
+    right: 30px;
+}
+
+#restart {
+    position: fixed;
+    top: 50px;
+    left: 50%;
+    visibility: hidden;
 }
