@@ -1,6 +1,6 @@
 /**
  * 2. сохраняєм монети в общу копілку або в отдєльний рахунок (спитать у артура)
- * 3. нормальні кнопки і екран смерті
+ * 3. нормальні кнопки (єсть) і екран смерті
  */
 
 
@@ -52,7 +52,7 @@ let movingPlatformImg;
 let oneTimePlatformImg;
 let falsePlatformImg;
 let invisiblePlatformImg; // платформа, на яку можна встати тільки один раз, після прижка
-let platformCount = 7;
+let platformCount = 10;
 let movingPlatformProbability = 0.12;
 let oneTimePlatformProbability = 0.12;
 let falsePlatformProbability = 0.1;
@@ -61,11 +61,21 @@ let gameOver = false;
 
 // coins
 let coinImg;
-let coinProbability = 0.1;
+let coinProbability = 0.03;
 let coinWidth = 40;
 let coinHeigth = 40;
 let coinArray = [];
 let coinsCollected = 0;
+
+// enemies
+let enemyImg1;
+let enemyImg2;
+let enemyWidth1 = 50;
+let enemyHeight1 = 50;
+let enemyWidth2 = 55;
+let enemyHeight2 = 50;
+let enemyProbability = 0.07;
+let enemyArray = [];
 
 window.onload = function() {
     board = document.getElementById("board");
@@ -116,25 +126,7 @@ window.onload = function() {
             velocityX = 0;
         }
     });
-    restartButton.addEventListener("click", () => {
-        doodler = {
-            img : doodlerRightImg,
-            x : doodlerX,
-            y : doodlerY,
-            width : doodlerWidth,
-            height : doodlerHeight
-        }
-
-        velocityX = 0;
-        velocityY = initialVelocityY;
-        score = 0;
-        maxScore = 0;
-        gameOver = false;
-        coinsCollected = 0;
-        coinArray = [];
-        restartButton.style.visibility = "hidden";
-        placePlatforms();
-    });
+    restartButton.addEventListener("click", () => gameReset());
     board.height = boardHeight;
     board.width = boardWidth;
     context = board.getContext("2d"); //used for drawing on the board
@@ -166,6 +158,12 @@ window.onload = function() {
     invisiblePlatformImg = new Image();
     invisiblePlatformImg.src = "./img/invisible_platform.png";
 
+    enemyImg1 = new Image();
+    enemyImg1.src = "./img/enemy1.png";
+
+    enemyImg2 = new Image();
+    enemyImg2.src = "./img/enemy2.png";
+
     coinImg = new Image();
     coinImg.src = "./img/moneta.PNG";
 
@@ -174,6 +172,27 @@ window.onload = function() {
     requestAnimationFrame(update);
     document.addEventListener("keydown", moveDoodler);
     document.addEventListener("keyup", () => velocityX = 0);
+}
+
+function gameReset() {
+    doodler = {
+        img : doodlerRightImg,
+        x : doodlerX,
+        y : doodlerY,
+        width : doodlerWidth,
+        height : doodlerHeight
+    }
+
+    velocityX = 0;
+    velocityY = initialVelocityY;
+    score = 0;
+    maxScore = 0;
+    gameOver = false;
+    coinsCollected = 0;
+    coinArray = [];
+    enemyArray = [];
+    restartButton.style.visibility = "hidden";
+    placePlatforms();
 }
 
 function update() {
@@ -237,6 +256,21 @@ function update() {
         context.drawImage(coin.img, coin.x, coin.y, coin.width, coin.height);
     }
 
+    // enemies
+    for (let i = 0; i < enemyArray.length; i++) {
+        let enemy = enemyArray[i];
+        if (velocityY < 0 && doodler.y < boardHeight*3/4) {
+            enemy.y -= initialVelocityY; //slide enemy down
+        }
+        if (enemyCollision(doodler, enemy) === "top") {
+            enemyArray.splice(i, 1);
+        } else if (enemyCollision(doodler, enemy) === "bottom") {
+            gameOver = true;
+            restartButton.style.visibility = "visible";
+        }
+        context.drawImage(enemy.img, enemy.x, enemy.y, enemy.width, enemy.height);
+    }
+
     // clear platforms and add new platform
     while (platformArray.length > 0 && platformArray[0].y >= boardHeight) {
         platformArray.shift(); //removes first element from the array
@@ -269,24 +303,7 @@ function moveDoodler(e) {
         doodler.img = doodlerLeftImg;
     }
     else if (e.code == "Space" && gameOver) {
-        //reset
-        doodler = {
-            img : doodlerRightImg,
-            x : doodlerX,
-            y : doodlerY,
-            width : doodlerWidth,
-            height : doodlerHeight
-        }
-
-        velocityX = 0;
-        velocityY = initialVelocityY;
-        score = 0;
-        maxScore = 0;
-        coinsCollected = 0;
-        gameOver = false;
-        restartButton.style.visibility = "hidden";
-        coinArray = [];
-        placePlatforms();
+        gameReset();
     }
 }
 
@@ -336,8 +353,8 @@ function newPlatform() {
     if (Math.random() < coinProbability) {
         let coin = {
             img: coinImg,
-            x: platform.x + 10,
-            y: platform.y - 50,
+            x: platform.x + (platform.width - coinWidth)/2,
+            y: platform.y - coinHeigth - 10,
             width: coinWidth,
             height: coinHeigth
         };
@@ -364,8 +381,36 @@ function newPlatform() {
             this.x += this.moveSpeed;
         };
     }
+    if (Math.random() < enemyProbability && !platform.move && platform.canJump && !platform.breaksOnContact) { // enemies can't be on moving or one-time platforms
+        let enemyVariant = Math.random() < 0.5 ? 1 : 2;
+        let enemy = {
+            img: enemyVariant == 1 ? enemyImg1 : enemyImg2,
+            x: platform.x + (platform.width - (enemyVariant == 1 ? enemyWidth1 : enemyWidth2))/2,
+            y: platform.y - enemyHeight1,
+            width: enemyVariant == 1 ? enemyWidth1 : enemyWidth2,
+            height: enemyVariant == 1 ? enemyHeight1 : enemyHeight2
+        };
+        enemyArray.push(enemy);
+    }
 
     platformArray.push(platform);
+}
+
+function enemyCollision(doodler, enemy) {
+    let killZone = enemy.height/10; // если игрок касается верхней части врага, то враг умирает
+    let doodlerBottomY = doodler.y + doodler.height;
+    let doodlerRightX = doodler.x + doodler.width;
+    let enemyBottomY = enemy.y + enemy.height;
+    let enemyRightX = enemy.x + enemy.width;
+    if (doodlerBottomY < enemy.y + killZone && doodlerBottomY > enemy.y &&
+        doodler.x < enemyRightX && doodlerRightX > enemy.x) {
+        return "top";
+    } else if (detectCollision(doodler, enemy)) {
+        return "bottom";
+    } else {
+        return "none";
+    }
+    
 }
 
 function isOnPlatofrm(doodler, platform) {
