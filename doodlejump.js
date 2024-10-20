@@ -32,7 +32,7 @@ let doodler = {
 let velocityX = 0; 
 let velocityXModule = 6; // модуль швидкості по Х
 let velocityY = 0; //doodler jump speed
-let initialVelocityY = -10; //starting velocity Y
+let initialVelocityY = -8; //starting velocity Y
 let gravity = 0.2;
 
 //platforms
