@@ -215,6 +215,7 @@ function update() {
             }
             if (platform.breaksOnContact) {
                 platformArray.splice(i, 1);
+                newPlatform(); // replace with new platform on top
             }
         }
         if (platform.move) {
