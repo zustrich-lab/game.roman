@@ -79,6 +79,28 @@ window.onload = function() {
             velocityX = 0;
         }
     });
+    leftButton.addEventListener("touchstart", () => {
+        if (!gameOver) {
+            velocityX = -velocityXModule;
+            doodler.img = doodlerLeftImg;
+        }
+    });
+    rightButton.addEventListener("touchstart", () => {
+        if (!gameOver) {
+            velocityX = velocityXModule;
+            doodler.img = doodlerRightImg;
+        }
+    });
+    leftButton.addEventListener("touchend", () => {
+        if (!gameOver) {
+            velocityX = 0;
+        }
+    });
+    rightButton.addEventListener("touchend", () => {
+        if (!gameOver) {
+            velocityX = 0;
+        }
+    });
     restartButton.addEventListener("click", () => {
         doodler = {
             img : doodlerRightImg,
