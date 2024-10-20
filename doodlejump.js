@@ -30,10 +30,10 @@ let doodler = {
 
 //physics
 let velocityX = 0; 
-let velocityXModule = 3; // модуль швидкості по Х
+let velocityXModule = 6; // модуль швидкості по Х
 let velocityY = 0; //doodler jump speed
-let initialVelocityY = -5; //starting velocity Y
-let gravity = 0.1;
+let initialVelocityY = -10; //starting velocity Y
+let gravity = 0.2;
 
 //platforms
 let platformArray = [];
@@ -285,7 +285,7 @@ function newPlatform() {
 
 function isOnPlatofrm(doodler, platform) {
     const doodlerBottomY = doodler.y + doodler.height;
-    const platformMiddleY = platform.y - platform.height/2;
+    const platformMiddleY = platform.y - platform.height*3/4;
     const platformRightX = platform.x + platform.width;
     const doodlerCheckX = doodler.x + doodler.width/4; // половина ширини по середині
     return doodlerBottomY < platform.y &&
