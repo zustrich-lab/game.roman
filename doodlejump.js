@@ -63,6 +63,14 @@ let coinHeigth = 40;
 let coinArray = [];
 let coinsCollected = 0;
 
+// coin display
+let coinDisplayImg;
+let coinDisplayRatio = 529 / 108;
+let coinDisplayHeight = window.innerHeight / 15;
+let coinDisplayWidth = coinDisplayHeight * coinDisplayRatio;
+let coinDisplayTextXOffset = coinDisplayWidth / 4;
+let coinDisplayTextYOffset = coinDisplayHeight * 5 / 8;
+
 // enemies
 let enemyImg1;
 let enemyImg2;
@@ -75,10 +83,6 @@ let enemyArray = [];
 
 window.onload = function() {
     board = document.getElementById("board");
-    leftButton = document.getElementById("left");
-    rightButton = document.getElementById("right");
-    restartButton = document.getElementById("restart");
-    restartButton.addEventListener("click", () => gameReset());
     board.height = boardHeight;
     board.width = boardWidth;
     context = board.getContext("2d"); //used for drawing on the board
@@ -119,6 +123,9 @@ window.onload = function() {
     coinImg = new Image();
     coinImg.src = "./img/moneta.PNG";
 
+    coinDisplayImg = new Image();
+    coinDisplayImg.src = "./img/coin_display.PNG";
+
     velocityY = initialVelocityY;
     placePlatforms();
     requestAnimationFrame(update);
@@ -127,6 +134,10 @@ window.onload = function() {
 
     // mobile controls
     board.addEventListener("touchstart", (e) => {
+        if (gameOver) {
+            gameReset();
+            return;
+        }
         if (e.touches[0].clientX < boardWidth/2) {
             velocityX = -velocityXModule;
             doodler.img = doodlerLeftImg;
@@ -158,7 +169,6 @@ function gameReset() {
     coinsCollected = 0;
     coinArray = [];
     enemyArray = [];
-    restartButton.style.visibility = "hidden";
     placePlatforms();
 }
 
@@ -182,7 +192,6 @@ function update() {
     doodler.y += velocityY;
     if (doodler.y > board.height) {
         gameOver = true;
-        restartButton.style.visibility = "visible";
     }
     context.drawImage(doodler.img, doodler.x, doodler.y, doodler.width, doodler.height);
     if (doodler.y < doodlerHeight) {
@@ -250,10 +259,10 @@ function update() {
     }
 
     //score
-    context.drawImage(coinImg, 5, 20, coinWidth, coinHeigth);
+    context.drawImage(coinDisplayImg, 5, 20, coinDisplayWidth, coinDisplayHeight);
     context.fillStyle = "white";
-    context.font = "28px sans-serif";
-    context.fillText(coinsCollected, 15 + coinWidth, 20 + coinHeigth*3/4);
+    context.font = "36px Brush Script MT, Brush Script Std, cursive";
+    context.fillText(coinsCollected, 5 + coinDisplayTextXOffset, 20 + coinDisplayTextYOffset);
 
     if (gameOver) {
         context.fillText("Game Over: Press 'Space' to Restart", boardWidth/7, boardHeight*7/8);
