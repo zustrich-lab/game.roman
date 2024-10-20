@@ -57,18 +57,6 @@ window.onload = function() {
     leftButton = document.getElementById("left");
     rightButton = document.getElementById("right");
     restartButton = document.getElementById("restart");
-    leftButton.addEventListener("touchstart", () => {
-        if (!gameOver) {
-            velocityX = -velocityXModule;
-            doodler.img = doodlerLeftImg;
-        }
-    });
-    rightButton.addEventListener("touchstart", () => {
-        if (!gameOver) {
-            velocityX = velocityXModule;
-            doodler.img = doodlerRightImg;
-        }
-    });
     leftButton.addEventListener("mousedown", () => {
         if (!gameOver) {
             velocityX = -velocityXModule;
@@ -79,6 +67,16 @@ window.onload = function() {
         if (!gameOver) {
             velocityX = velocityXModule;
             doodler.img = doodlerRightImg;
+        }
+    });
+    leftButton.addEventListener("mouseup", () => {
+        if (!gameOver) {
+            velocityX = 0;
+        }
+    });
+    rightButton.addEventListener("mouseup", () => {
+        if (!gameOver) {
+            velocityX = 0;
         }
     });
     restartButton.addEventListener("click", () => {
@@ -126,6 +124,7 @@ window.onload = function() {
     placePlatforms();
     requestAnimationFrame(update);
     document.addEventListener("keydown", moveDoodler);
+    document.addEventListener("keyup", () => velocityX = 0);
 }
 
 function update() {
