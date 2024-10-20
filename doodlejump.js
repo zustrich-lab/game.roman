@@ -1,3 +1,15 @@
+/**
+ * 1. добавляєм такі платформи:
+ * двигається - кам'яна в диму
+ * ламається після прижка - полупрозрачна
+ * ламається без прижка - із пилі
+ * 2. сохраняєм монети в общу копілку або в отдєльний рахунок (спитать у артура)
+ * 3. нормальні кнопки і екран смерті
+ */
+
+
+
+
 //board
 let board;
 let bgRatio = 1080 / 1920;
@@ -40,7 +52,13 @@ let platformArray = [];
 let platformWidth = 60;
 let platformHeight = 18;
 let platformImg;
-let platformCount = 7;
+let movingPlatformImg;
+let oneTimePlatformImg;
+let falsePlatformImg;
+let platformCount = 10;
+let movingPlatformProbability = 0.12;
+let oneTimePlatformProbability = 0.12;
+let falsePlatformProbability = 0.1;
 
 let gameOver = false;
 
@@ -116,7 +134,7 @@ window.onload = function() {
         maxScore = 0;
         gameOver = false;
         coinsCollected = 0;
-        coinArray = []
+        coinArray = [];
         restartButton.style.visibility = "hidden";
         placePlatforms();
     });
@@ -138,6 +156,15 @@ window.onload = function() {
 
     platformImg = new Image();
     platformImg.src = "./img/octiejumpplatform.png";
+
+    oneTimePlatformImg = new Image();
+    oneTimePlatformImg.src = "./img/one_time_platform.png";
+
+    movingPlatformImg = new Image();
+    movingPlatformImg.src = "./img/moving_platform.png";
+
+    falsePlatformImg = new Image();
+    falsePlatformImg.src = "./img/false_platform.png";
 
     coinImg = new Image();
     coinImg.src = "./img/moneta.PNG";
@@ -183,7 +210,15 @@ function update() {
             platform.y -= initialVelocityY; //slide platform down
         }
         if (isOnPlatofrm(doodler, platform) && velocityY >= 0) {
-            velocityY = initialVelocityY; //jump
+            if (platform.canJump) {
+                velocityY = initialVelocityY;
+            }
+            if (platform.breaksOnContact) {
+                platformArray.splice(i, 1);
+            }
+        }
+        if (platform.move) {
+            platform.move();
         }
         context.drawImage(platform.img, platform.x, platform.y, platform.width, platform.height);
     }
@@ -263,7 +298,9 @@ function placePlatforms() {
         x : boardWidth/2,
         y : boardHeight - 50,
         width : platformWidth,
-        height : platformHeight
+        height : platformHeight,
+        canJump: true,
+        breaksOnContact: false
     }
 
     platformArray.push(platform);
@@ -275,7 +312,9 @@ function placePlatforms() {
             x : randomX,
             y : boardHeight - 75*i - 150,
             width : platformWidth,
-            height : platformHeight
+            height : platformHeight,
+            canJump: true,
+            breaksOnContact: false
         }
     
         platformArray.push(platform);
@@ -289,8 +328,10 @@ function newPlatform() {
         x : randomX,
         y : -platformHeight,
         width : platformWidth,
-        height : platformHeight
-    }
+        height : platformHeight,
+        canJump: true,
+        breaksOnContact: false
+    };
     if (Math.random() < coinProbability) {
         let coin = {
             img: coinImg,
@@ -300,6 +341,27 @@ function newPlatform() {
             height: coinHeigth
         };
         coinArray.push(coin);
+    } else if (Math.random() < falsePlatformProbability) {
+        platform.img = falsePlatformImg;
+        platform.breaksOnContact = true;
+        platform.canJump = false;
+    } else if (Math.random() < oneTimePlatformProbability) {
+        platform.img = oneTimePlatformImg;
+        platform.breaksOnContact = true;
+        platform.canJump = true;
+    } else if (Math.random() < movingPlatformProbability) {
+        platform.img = movingPlatformImg;
+        platform.moveFrom = randomX;
+        platform.moveTo = Math.min(randomX + 100 + Math.floor(Math.random() * boardWidth/2), boardWidth - platformWidth);
+        platform.moveSpeed = 1;
+        platform.move = function() {
+            if (this.x < this.moveFrom) {
+                this.moveSpeed = 1;
+            } else if (this.x > this.moveTo) {
+                this.moveSpeed = -1;
+            }
+            this.x += this.moveSpeed;
+        };
     }
 
     platformArray.push(platform);
