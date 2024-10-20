@@ -1,10 +1,20 @@
 /**
- * 2. сохраняєм монети в общу копілку або в отдєльний рахунок (спитать у артура)
- * 3. нормальні кнопки (єсть) і екран смерті
+ * 1. сохраняєм монети в общу копілку або в отдєльний рахунок (спитать у артура)
+ * 2. меню старт, смерть
+ * 3. жизні
+ * 4. колись зробить рефакторинг цього піздєца
  */
 
 
+// game handle
+let currentAnimationFrame;
 
+// menu
+let startMenu;
+let gameOverMenu;
+let startButton;
+let playAgain;
+let menuButton;
 
 //board
 let board;
@@ -12,9 +22,6 @@ let bgRatio = 1080 / 1920;
 let boardWidth = Math.min(window.innerHeight * bgRatio, window.innerWidth);
 let boardHeight = window.innerHeight;
 let context;
-
-// mobile controls
-let restartButton;
 
 //doodler
 let doodlerWidth = 50;
@@ -83,10 +90,17 @@ let enemyArray = [];
 
 window.onload = function() {
     board = document.getElementById("board");
+    startMenu = document.getElementById("startMenu");
+    gameOverMenu = document.getElementById("gameOverMenu");
     board.height = boardHeight;
     board.width = boardWidth;
+    gameOverMenu.style.height = board.height + "px";
+    gameOverMenu.style.width = board.width + "px";
+    gameOverMenu.style.left = (window.innerWidth - board.width)/2 + "px";
     context = board.getContext("2d"); //used for drawing on the board
 
+    playAgain = document.getElementById("playAgain");
+    playAgain.addEventListener("click", gameReset);
 
     //load images
     doodlerRightImg = new Image();
@@ -128,7 +142,7 @@ window.onload = function() {
 
     velocityY = initialVelocityY;
     placePlatforms();
-    requestAnimationFrame(update);
+    startGame();
     document.addEventListener("keydown", moveDoodler);
     document.addEventListener("keyup", () => velocityX = 0);
 
@@ -152,6 +166,14 @@ window.onload = function() {
     });
 }
 
+function startGame() {
+    requestAnimationFrame(update);
+}
+
+function stopGame() {
+    cancelAnimationFrame(currentAnimationFrame);
+}
+
 function gameReset() {
     doodler = {
         img : doodlerRightImg,
@@ -170,10 +192,18 @@ function gameReset() {
     coinArray = [];
     enemyArray = [];
     placePlatforms();
+    document.querySelector("body").appendChild(board);
+    gameOverMenu.style.display = "none";
+}
+
+function endGame() {
+    gameOver = true;
+    gameOverMenu.style.display = "flex";
+    document.querySelector("body").removeChild(board);
 }
 
 function update() {
-    requestAnimationFrame(update);
+    currentAnimationFrame = requestAnimationFrame(update);
     if (gameOver) {
         return;
     }
@@ -191,7 +221,7 @@ function update() {
     velocityY += gravity;
     doodler.y += velocityY;
     if (doodler.y > board.height) {
-        gameOver = true;
+        endGame();
     }
     context.drawImage(doodler.img, doodler.x, doodler.y, doodler.width, doodler.height);
     if (doodler.y < doodlerHeight) {
@@ -242,7 +272,7 @@ function update() {
             enemyArray.splice(i, 1);
         } else if (enemyCollision(doodler, enemy) === "bottom") {
             gameOver = true;
-            restartButton.style.visibility = "visible";
+            playAgain.style.visibility = "visible";
         }
         context.drawImage(enemy.img, enemy.x, enemy.y, enemy.width, enemy.height);
     }

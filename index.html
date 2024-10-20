@@ -9,5 +9,30 @@
     </head>
     <body>
         <canvas id="board"></canvas>
+        <div id="gameOverMenu">
+            <h1>Game over</h1>
+            <div id="stats">
+                <div class="statsContainer">
+                    <h2 class="infoBadge">Collected coins</h2>
+                    <img src="./img/moneta.PNG">
+                    <span id="coins">0</span>
+                </div>
+                <div class="statsContainer">
+                    <h2 class="infoBadge">Lives left</h2>
+                    <img src="./img/lives.PNG">
+                    <span id="score">3</span>
+                </div>
+            </div>
+            <div class="buttonContainer">
+                <button id="playAgain">PLAY<br>again</button>
+            </div>
+            <div class="buttonContainer">
+                <button id="mainMenu">Menu</button>
+            </div>
+        </div>
+        <div id="startMenu">
+            <h1>Doodle Jump</h1>
+            <button onclick="startGame()">Start Game</button>
+        </div>
     </body>
 </html>
