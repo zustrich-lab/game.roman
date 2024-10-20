@@ -45,7 +45,7 @@ let velocityX = 0;
 let velocityXModule = 6; // модуль швидкості по Х
 let velocityY = 0; //doodler jump speed
 let initialVelocityY = -10; //starting velocity Y
-let gravity = 0.4;
+let gravity = 0.1;
 
 //platforms
 let platformArray = [];
@@ -55,7 +55,8 @@ let platformImg;
 let movingPlatformImg;
 let oneTimePlatformImg;
 let falsePlatformImg;
-let platformCount = 7;
+let invisiblePlatformImg; // платформа, на яку можна встати тільки один раз, після прижка
+let platformCount = 10;
 let movingPlatformProbability = 0.12;
 let oneTimePlatformProbability = 0.12;
 let falsePlatformProbability = 0.1;
@@ -166,6 +167,9 @@ window.onload = function() {
     falsePlatformImg = new Image();
     falsePlatformImg.src = "./img/false_platform.png";
 
+    invisiblePlatformImg = new Image();
+    invisiblePlatformImg.src = "./img/invisible_platform.png";
+
     coinImg = new Image();
     coinImg.src = "./img/moneta.PNG";
 
@@ -214,7 +218,7 @@ function update() {
                 velocityY = initialVelocityY;
             }
             if (platform.breaksOnContact) {
-                platform.img = null;
+                platform.img = invisiblePlatformImg;
                 platform.canJump = false;
             }
         }
