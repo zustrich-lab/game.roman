@@ -189,13 +189,14 @@ function update() {
     }
 
     // coins
-    for (let coin of coinArray) {
+    for (let i = 0; i < coinArray.length; i++) {
+        let coin = coinArray[i];
         if (velocityY < 0 && doodler.y < boardHeight*3/4) {
-            coin.y -= initialVelocityY; //slide platform down
+            coin.y -= initialVelocityY; //slide coin down
         }
         if (detectCollision(doodler, coin)) {
             coinsCollected++;
-            coinArray.pop(coin);
+            coinArray.splice(i, 1);
         }
         context.drawImage(coin.img, coin.x, coin.y, coin.width, coin.height);
     }
