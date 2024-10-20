@@ -33,7 +33,7 @@ let velocityX = 0;
 let velocityXModule = 6; // модуль швидкості по Х
 let velocityY = 0; //doodler jump speed
 let initialVelocityY = -8; //starting velocity Y
-let gravity = 0.2;
+let gravity = 0.4;
 
 //platforms
 let platformArray = [];
