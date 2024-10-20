@@ -214,8 +214,8 @@ function update() {
                 velocityY = initialVelocityY;
             }
             if (platform.breaksOnContact) {
-                platformArray.splice(i, 1);
-                newPlatform(); // replace with new platform on top
+                platform.img = null;
+                platform.canJump = false;
             }
         }
         if (platform.move) {
