@@ -56,7 +56,7 @@ let movingPlatformImg;
 let oneTimePlatformImg;
 let falsePlatformImg;
 let invisiblePlatformImg; // платформа, на яку можна встати тільки один раз, після прижка
-let platformCount = 10;
+let platformCount = 7;
 let movingPlatformProbability = 0.12;
 let oneTimePlatformProbability = 0.12;
 let falsePlatformProbability = 0.1;
