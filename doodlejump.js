@@ -13,12 +13,8 @@ let boardWidth = Math.min(window.innerHeight * bgRatio, window.innerWidth);
 let boardHeight = window.innerHeight;
 let context;
 
-// mobilnoe upravlenie
-let leftButton;
-let rightButton;
+// mobile controls
 let restartButton;
-let isLeftClicked = false;
-let isRightClicked = false;
 
 //doodler
 let doodlerWidth = 50;
@@ -53,9 +49,9 @@ let oneTimePlatformImg;
 let falsePlatformImg;
 let invisiblePlatformImg; // платформа, на яку можна встати тільки один раз, після прижка
 let platformCount = 7;
-let movingPlatformProbability = 0.12;
+let movingPlatformProbability = 0.1;
 let oneTimePlatformProbability = 0.12;
-let falsePlatformProbability = 0.1;
+let falsePlatformProbability = 0.06;
 
 let gameOver = false;
 
@@ -82,50 +78,6 @@ window.onload = function() {
     leftButton = document.getElementById("left");
     rightButton = document.getElementById("right");
     restartButton = document.getElementById("restart");
-    leftButton.addEventListener("mousedown", () => {
-        if (!gameOver) {
-            velocityX = -velocityXModule;
-            doodler.img = doodlerLeftImg;
-        }
-    });
-    rightButton.addEventListener("mousedown", () => {
-        if (!gameOver) {
-            velocityX = velocityXModule;
-            doodler.img = doodlerRightImg;
-        }
-    });
-    leftButton.addEventListener("mouseup", () => {
-        if (!gameOver) {
-            velocityX = 0;
-        }
-    });
-    rightButton.addEventListener("mouseup", () => {
-        if (!gameOver) {
-            velocityX = 0;
-        }
-    });
-    leftButton.addEventListener("touchstart", () => {
-        if (!gameOver) {
-            velocityX = -velocityXModule;
-            doodler.img = doodlerLeftImg;
-        }
-    });
-    rightButton.addEventListener("touchstart", () => {
-        if (!gameOver) {
-            velocityX = velocityXModule;
-            doodler.img = doodlerRightImg;
-        }
-    });
-    leftButton.addEventListener("touchend", () => {
-        if (!gameOver) {
-            velocityX = 0;
-        }
-    });
-    rightButton.addEventListener("touchend", () => {
-        if (!gameOver) {
-            velocityX = 0;
-        }
-    });
     restartButton.addEventListener("click", () => gameReset());
     board.height = boardHeight;
     board.width = boardWidth;
@@ -172,6 +124,21 @@ window.onload = function() {
     requestAnimationFrame(update);
     document.addEventListener("keydown", moveDoodler);
     document.addEventListener("keyup", () => velocityX = 0);
+
+    // mobile controls
+    board.addEventListener("touchstart", (e) => {
+        if (e.touches[0].clientX < boardWidth/2) {
+            velocityX = -velocityXModule;
+            doodler.img = doodlerLeftImg;
+        } else {
+            velocityX = velocityXModule;
+            doodler.img = doodlerRightImg;
+        }
+    });
+
+    board.addEventListener("touchend", () => {
+        velocityX = 0;
+    }
 }
 
 function gameReset() {
