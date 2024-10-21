@@ -19,7 +19,7 @@ let menuButton;
 //board
 let board;
 let bgRatio = 1080 / 1920;
-let boardWidth = Math.min(window.innerHeight * bgRatio, window.innerWidth);
+let boardWidth = Math.max(window.innerHeight * bgRatio, window.innerWidth);
 let boardHeight = window.innerHeight;
 let context;
 

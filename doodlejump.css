@@ -1,6 +1,7 @@
 * {
     overflow-y: hidden;
     user-select: none;
+    -webkit-user-select: none; /* Safari */
     font-family: Brush Script MT, Brush Script Std, cursive;
 }
 
